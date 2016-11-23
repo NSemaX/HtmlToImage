@@ -1,0 +1,75 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="row">
+    <h2>Convert your html divs to image.</h2>
+    </div>
+    <div class="row">
+        <div id="test2" style="background:black;width:700px;">
+            <img src="../img/iron-man-2.jpg" />
+            <br />
+            <p style="color:white;font-size:34px;">Hello ,I am Iron Man.</p>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div id="welcome" class="col-md-4">
+            <h2>Getting started</h2>
+            <p>
+                ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
+                enables a clean separation of concerns and gives you full control over markup
+                for enjoyable, agile development.
+            </p>
+            <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
+        </div>
+        <div class="col-md-4">
+            <h2>Get more libraries</h2>
+            <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
+            <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
+        </div>
+        <div class="col-md-4">
+            <h2>Web Hosting</h2>
+            <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
+            <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
+        </div>
+    </div>
+
+    <br />
+    <div>
+        <input type="submit" id="create_image" name="create" class="btn btn-primary btn-lg" style="width:100%;" value="Create Image" onclick="CreateImage()" />
+    </div>
+
+    <script type="text/javascript" src="@Url.Content("~/Scripts/jquery.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/html2canvas.min.js")"></script>
+    <script type="text/javascript">
+        function CreateImage() {
+            html2canvas($("#test2")[0]).then(function (canvas) {
+                var base64 = canvas.toDataURL();
+                $.ajax({
+                    method: "POST",
+                    url: '@Url.Content("~/Home/CreateImage")',
+                    data: { 'imagedata': base64 },
+                    success: function (res) {
+
+                        var jtext = JSON.stringify(res);
+                        var returnedData = JSON.parse(jtext);
+
+                        if (returnedData.Code == true || returnedData.Code == 'true') {
+
+                            alert("Image Saved");
+
+                        } else {
+                            alert("Fail! " + returnedData.Description);
+                            location.reload();
+                        }
+                    }, error: function (x, h, r) {
+                        alert(x + h + r);
+                    }
+                });
+
+            });
+            return false;
+        }
+    </script>
